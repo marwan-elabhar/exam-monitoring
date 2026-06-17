@@ -1,5 +1,6 @@
 import {SelectHTMLAttributes, useId} from "react";
 import {cn} from "@/lib/utils";
+import {ChevronDownIcon} from "@/components/ui/icons/ChevronDownIcon";
 
 export interface DropdownOption<T extends string> {
     label: string;
@@ -11,7 +12,7 @@ interface DropdownProps<T extends string>
     value: T;
     onChange: (value: T) => void;
     options: DropdownOption<T>[];
-    label: string; // visually hidden, announced by screen readers
+    label: string;
     placeholder?: string; // shown as the first "all" option
 }
 
@@ -57,21 +58,7 @@ export function Dropdown<T extends string>({
                 ))}
             </select>
 
-            {/* Custom chevron — replaces the native arrow removed by appearance-none */}
-            <svg
-                aria-hidden="true"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="absolute right-2.5 text-secondary pointer-events-none shrink-0"
-            >
-                <path d="m6 9 6 6 6-6"/>
-            </svg>
+            <ChevronDownIcon className="absolute right-2.5 text-secondary pointer-events-none shrink-0"/>
         </div>
     );
 }
