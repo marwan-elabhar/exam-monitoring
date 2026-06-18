@@ -1,15 +1,15 @@
-import { memo } from "react";
-import { SessionStatus } from "@/types";
-import { StatusBadge } from "@/components/dashboard/Badge";
+import {memo} from "react";
+import {SessionStatus} from "@/types";
+import {StatusBadge} from "@/components/dashboard/Badge";
 
 interface StatusCellProps {
-  status: SessionStatus;
+    status: SessionStatus;
 }
 
-export const StatusCell = memo(function StatusCell({ status }: StatusCellProps) {
-  return (
-    <div className="w-[160px] shrink-0">
-      <StatusBadge status={status} />
-    </div>
-  );
+export const StatusCell = memo(function StatusCell({status}: StatusCellProps) {
+    return (
+        <div>
+            <StatusBadge status={status}/>
+        </div>
+    );
 });
