@@ -1,34 +1,35 @@
-import { RootState } from "@/store";
-import { Candidate } from "@/types";
-import { createSelector } from "@reduxjs/toolkit";
+import {RootState} from "@/store";
+import {Candidate} from "@/types";
+import {createSelector} from "@reduxjs/toolkit";
 
 const selectAllCandidates = (state: RootState) => state.candidates.items;
-const selectFilters = (state: RootState) => state.filters;
+const selectSearch = (state: RootState) => state.filters.search;
+const selectRisk = (state: RootState) => state.filters.risk;
+const selectStatus = (state: RootState) => state.filters.status;
 
 export const selectFilteredCandidates = createSelector(
-  [selectAllCandidates, selectFilters],
-  (candidates, filters): Candidate[] => {
-    return candidates.filter((c) => {
-      const matchesSearch =
-        filters.search === "" ||
-        c.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        c.email.toLowerCase().includes(filters.search.toLowerCase());
+    [selectAllCandidates, selectSearch, selectRisk, selectStatus],
+    (candidates, search, risk, status): Candidate[] => {
+        const searchTerm = search.toLowerCase();
+        const noSearch = searchTerm === "";
+        const noRisk = risk === "all";
+        const noStatus = status === "all";
 
-      const matchesRisk =
-        filters.risk === "all" || c.riskLevel === filters.risk;
+        if (noSearch && noRisk && noStatus) return candidates;
 
-      const matchesStatus =
-        filters.status === "all" || c.status === filters.status;
-
-      return matchesSearch && matchesRisk && matchesStatus;
-    });
-  }
+        return candidates.filter((c) => {
+            if (!noSearch && !c.searchKey.includes(searchTerm)) return false;
+            if (!noRisk && c.riskLevel !== risk) return false;
+            if (!noStatus && c.status !== status) return false;
+            return true;
+        });
+    }
 );
 
 export const selectTotalCount = (state: RootState) =>
-  state.candidates.totalCount;
+    state.candidates.totalCount;
 
 export const selectIsLoading = (state: RootState) => state.ui.isLoading;
 export const selectError = (state: RootState) => state.ui.error;
-export const selectSelectedCandidateId = (state: RootState) =>
-  state.ui.selectedCandidateId;
+export const selectSelectedCandidateId = (state: RootState) => state.ui.selectedCandidateId;
+export const selectConnectionStatus = (state: RootState) => state.ui.connectionStatus;
