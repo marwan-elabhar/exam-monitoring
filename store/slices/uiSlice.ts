@@ -3,6 +3,7 @@ import { UIState, ConnectionStatus } from "@/types";
 
 const initialState: UIState = {
   selectedCandidateId: null,
+  pendingTerminateCandidateId: null,
   isLoading: true,
   error: null,
   connectionStatus: "connecting",
@@ -14,6 +15,9 @@ const uiSlice = createSlice({
   reducers: {
     setSelectedCandidate(state, action: PayloadAction<string | null>) {
       state.selectedCandidateId = action.payload;
+    },
+    setPendingTerminate(state, action: PayloadAction<string | null>) {
+      state.pendingTerminateCandidateId = action.payload;
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
@@ -29,6 +33,7 @@ const uiSlice = createSlice({
 
 export const {
   setSelectedCandidate,
+  setPendingTerminate,
   setLoading,
   setError,
   setConnectionStatus,

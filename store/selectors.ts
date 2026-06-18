@@ -32,10 +32,17 @@ export const selectTotalCount = (state: RootState) =>
 export const selectIsLoading = (state: RootState) => state.ui.isLoading;
 export const selectError = (state: RootState) => state.ui.error;
 export const selectSelectedCandidateId = (state: RootState) => state.ui.selectedCandidateId;
+export const selectPendingTerminateCandidateId = (state: RootState) => state.ui.pendingTerminateCandidateId;
 export const selectConnectionStatus = (state: RootState) => state.ui.connectionStatus;
 
 export const selectSelectedCandidate = createSelector(
     [(state: RootState) => state.candidates.items, selectSelectedCandidateId],
+    (items, id): Candidate | null =>
+        id ? (items.find((c) => c.id === id) ?? null) : null
+);
+
+export const selectPendingTerminateCandidate = createSelector(
+    [(state: RootState) => state.candidates.items, selectPendingTerminateCandidateId],
     (items, id): Candidate | null =>
         id ? (items.find((c) => c.id === id) ?? null) : null
 );

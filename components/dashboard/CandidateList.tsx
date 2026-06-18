@@ -5,8 +5,7 @@ import {useAppDispatch, useAppSelector} from "@/hooks/redux";
 import {useIsMobile} from "@/hooks/useMediaQuery";
 import {useRealtimeEvents} from "@/lib/realtime/useRealtimeEvents";
 import {selectFilteredCandidates, selectIsLoading} from "@/store/selectors";
-import {terminateSession} from "@/store/slices/candidatesSlice";
-import {setSelectedCandidate} from "@/store/slices/uiSlice";
+import {setSelectedCandidate, setPendingTerminate} from "@/store/slices/uiSlice";
 import {Candidate} from "@/types";
 import {CandidatesTable} from "@/components/dashboard/desktop/CandidatesTable";
 import {CandidateCardList} from "@/components/dashboard/mobile/CandidateCardList";
@@ -15,6 +14,7 @@ import {ConnectionBanner} from "@/components/ui/ConnectionBanner";
 import {Filters} from "@/components/dashboard/Filters";
 import Header from "@/components/dashboard/Header";
 import {CandidateDetail} from "@/components/dashboard/candidate-details/CandidateDetail";
+import {TerminateModal} from "@/components/dashboard/TerminateModal";
 
 export function CandidateList() {
     const dispatch = useAppDispatch();
@@ -37,7 +37,7 @@ export function CandidateList() {
     );
 
     const handleTerminate = useCallback(
-        (candidate: Candidate) => dispatch(terminateSession(candidate.id)),
+        (candidate: Candidate) => dispatch(setPendingTerminate(candidate.id)),
         [dispatch]
     );
 
@@ -64,6 +64,7 @@ export function CandidateList() {
                     : <CandidatesTable {...sharedProps} />
             }
             <CandidateDetail/>
+            <TerminateModal/>
         </div>
     );
 }

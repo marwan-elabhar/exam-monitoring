@@ -61,6 +61,7 @@ export type ConnectionStatus =
 
 export interface UIState {
   selectedCandidateId: string | null;
+  pendingTerminateCandidateId: string | null;
   isLoading: boolean;
   error: string | null;
   connectionStatus: ConnectionStatus;
