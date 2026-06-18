@@ -30,6 +30,23 @@ export interface RealtimeEvent {
   timestamp: string;
 }
 
+export type ActivityEventType =
+  | "status_change"
+  | "risk_change"
+  | "flag"
+  | "connection_drop"
+  | "reconnect"
+  | "proctor_note"
+  | "session_start";
+
+export interface CandidateActivity {
+  id: string;
+  candidateId: string;
+  type: ActivityEventType;
+  description: string;
+  timestamp: string; // ISO string
+}
+
 export interface FiltersState {
   search: string;
   risk: RiskLevel | "all";
