@@ -14,6 +14,7 @@ export interface Candidate {
   riskLevel: RiskLevel;
   status: SessionStatus;
   lastActiveAt: string; // ISO string
+  searchKey: string;    // precomputed lowercase "name email" for fast filtering
 }
 
 export interface RealtimeEvent {
@@ -35,8 +36,15 @@ export interface FiltersState {
   status: SessionStatus | "all";
 }
 
+export type ConnectionStatus =
+  | "connecting"
+  | "connected"
+  | "reconnecting"
+  | "failed";
+
 export interface UIState {
   selectedCandidateId: string | null;
   isLoading: boolean;
   error: string | null;
+  connectionStatus: ConnectionStatus;
 }
