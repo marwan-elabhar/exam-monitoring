@@ -1,8 +1,7 @@
 "use client";
 
-import {useEffect, useCallback} from "react";
-import {useAppDispatch} from "@/hooks/redux";
-import {useAppSelector} from "@/hooks/redux";
+import {useEffect, useCallback, useRef} from "react";
+import {useAppDispatch, useAppSelector} from "@/hooks/redux";
 import {applyRealtimeEvent} from "@/store/slices/candidatesSlice";
 import {addActivityEvent} from "@/store/slices/activitySlice";
 import {setConnectionStatus, setError} from "@/store/slices/uiSlice";
@@ -24,15 +23,19 @@ export function useRealtimeEvents() {
     const dispatch = useAppDispatch();
     const selectedCandidateId = useAppSelector(selectSelectedCandidateId);
 
+    const selectedIdRef = useRef<string | null>(selectedCandidateId);
+    useEffect(() => {
+        selectedIdRef.current = selectedCandidateId;
+    }, [selectedCandidateId]);
+
     const handleEvent = useCallback(
         (event: RealtimeEvent) => {
             dispatch(applyRealtimeEvent(event));
-            // If the panel is open for this candidate, also record to timeline
-            if (selectedCandidateId && event.candidateId === selectedCandidateId) {
+            if (selectedIdRef.current && event.candidateId === selectedIdRef.current) {
                 dispatch(addActivityEvent(event));
             }
         },
-        [dispatch, selectedCandidateId]
+        [dispatch]
     );
 
     useEffect(() => {
@@ -41,8 +44,6 @@ export function useRealtimeEvents() {
         try {
             pusher = getPusherClient();
         } catch {
-            // NEXT_PUBLIC_PUSHER_KEY not set. Start mock emitter which POSTs
-            // to /api/pusher/trigger. Events still flow through Pusher.
             if (process.env.NODE_ENV === "development") {
                 dispatch(setConnectionStatus("connected"));
                 let cleanup: (() => void) | undefined;
@@ -51,43 +52,31 @@ export function useRealtimeEvents() {
                 });
                 return () => cleanup?.();
             }
-
             dispatch(setConnectionStatus("failed"));
             dispatch(setError("Realtime configuration is missing. Contact support."));
             return;
         }
 
-
         pusher.connection.bind("connecting", () => {
             dispatch(setConnectionStatus("connecting"));
             dispatch(setError(null));
         });
-
         pusher.connection.bind("connected", () => {
             dispatch(setConnectionStatus("connected"));
             dispatch(setError(null));
         });
-
-        // "unavailable" fires when Pusher cannot connect after multiple attempts.
-        // Pusher will keep retrying automatically.
         pusher.connection.bind("unavailable", () => {
             dispatch(setConnectionStatus("reconnecting"));
             dispatch(setError(CONNECTION_MESSAGES["unavailable"]));
         });
-
-        // "failed" fires when the browser does not support WebSockets at all.
         pusher.connection.bind("failed", () => {
             dispatch(setConnectionStatus("failed"));
             dispatch(setError(CONNECTION_MESSAGES["failed"]));
         });
-
-        // "disconnected" fires on clean disconnect or unexpected drop.
-        // Pusher auto-reconnects unless you called .disconnect() explicitly.
         pusher.connection.bind("disconnected", () => {
             dispatch(setConnectionStatus("reconnecting"));
             dispatch(setError(CONNECTION_MESSAGES["disconnected"]));
         });
-
 
         const channel = pusher.subscribe(CHANNEL_NAME);
 
@@ -105,8 +94,6 @@ export function useRealtimeEvents() {
         channel.bind(EVENT_NAME, (data: RealtimeEvent) => {
             handleEvent(data);
         });
-
-        // Cleanup
 
         return () => {
             channel.unbind_all();
