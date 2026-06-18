@@ -1,13 +1,18 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+import { useIsClient } from "@/hooks/useIsClient";
 
 interface SlideoutPanelProps {
   open: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  // "right"  — full-height side panel (default, used for candidate detail)
+  // "bottom" — action sheet that slides up from the bottom (used for mobile actions)
+  position?: "right" | "bottom";
 }
 
 export function SlideoutPanel({
@@ -15,11 +20,12 @@ export function SlideoutPanel({
   onClose,
   title,
   children,
+  position = "right",
 }: SlideoutPanelProps) {
   const panelRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const isClient = useIsClient();
 
-  // Trap focus inside the panel when open
   useEffect(() => {
     if (!open) return;
     closeButtonRef.current?.focus();
@@ -48,7 +54,9 @@ export function SlideoutPanel({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, onClose]);
 
-  return (
+  if (!isClient) return null;
+
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -67,14 +75,22 @@ export function SlideoutPanel({
         aria-modal="true"
         aria-label={title}
         className={cn(
-          "fixed top-0 right-0 z-50 h-full w-full md:w-[420px]",
-          "flex flex-col bg-header border-l border-border",
+          "fixed z-50 flex flex-col bg-header border-border",
           "transition-transform duration-300 ease-out",
-          open ? "translate-x-0" : "translate-x-full"
+          position === "right" && "top-0 right-0 h-full w-full md:w-[420px] border-l",
+          position === "right" && (open ? "translate-x-0" : "translate-x-full"),
+          position === "bottom" && "bottom-0 left-0 right-0 w-full rounded-t-2xl border-t",
+          position === "bottom" && (open ? "translate-y-0" : "translate-y-full"),
         )}
       >
         {/* Panel header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
+          {position === "bottom" && (
+            <div
+              aria-hidden="true"
+              className="absolute top-2.5 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-border"
+            />
+          )}
           <h2 className="text-base font-semibold text-primary">{title}</h2>
           <button
             ref={closeButtonRef}
@@ -103,6 +119,7 @@ export function SlideoutPanel({
           {children}
         </div>
       </aside>
-    </>
+    </>,
+    document.body
   );
 }
