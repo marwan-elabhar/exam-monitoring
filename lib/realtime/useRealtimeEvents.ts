@@ -2,8 +2,11 @@
 
 import {useEffect, useCallback} from "react";
 import {useAppDispatch} from "@/hooks/redux";
+import {useAppSelector} from "@/hooks/redux";
 import {applyRealtimeEvent} from "@/store/slices/candidatesSlice";
+import {addActivityEvent} from "@/store/slices/activitySlice";
 import {setConnectionStatus, setError} from "@/store/slices/uiSlice";
+import {selectSelectedCandidateId} from "@/store/selectors";
 import {RealtimeEvent} from "@/types";
 import {getPusherClient, disconnectPusher} from "@/lib/realtime/pusher";
 
@@ -19,12 +22,17 @@ const CONNECTION_MESSAGES: Record<string, string> = {
 
 export function useRealtimeEvents() {
     const dispatch = useAppDispatch();
+    const selectedCandidateId = useAppSelector(selectSelectedCandidateId);
 
     const handleEvent = useCallback(
         (event: RealtimeEvent) => {
             dispatch(applyRealtimeEvent(event));
+            // If the panel is open for this candidate, also record to timeline
+            if (selectedCandidateId && event.candidateId === selectedCandidateId) {
+                dispatch(addActivityEvent(event));
+            }
         },
-        [dispatch]
+        [dispatch, selectedCandidateId]
     );
 
     useEffect(() => {
