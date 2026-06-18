@@ -110,6 +110,13 @@ collapsible sections or tabs within the same dashboard.
 
 ---
 
+## AI Usage
+
+- Used as a junior developer to execute tasks and write code that I explain clearly.
+- Used at the beginning as someone I'm thinking with in order to define the scope of the project and understand how exam
+  monitoring dashboards work.
+- Used as a guide for creating the design on figma
+
 ## Getting Started
 
 To run the project locally, follow these steps.
