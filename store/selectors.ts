@@ -1,8 +1,15 @@
 import {RootState} from "@/store";
 import {Candidate, CandidateActivity} from "@/types";
 import {createSelector} from "@reduxjs/toolkit";
+import {candidatesSelectors} from "@/store/slices/candidatesSlice";
 
-const selectAllCandidates = (state: RootState) => state.candidates.items;
+
+const selectAllCandidates = (state: RootState) =>
+    candidatesSelectors.selectAll(state.candidates);
+
+const selectEntities = (state: RootState) =>
+    candidatesSelectors.selectEntities(state.candidates);
+
 const selectSearch = (state: RootState) => state.filters.search;
 const selectRisk = (state: RootState) => state.filters.risk;
 const selectStatus = (state: RootState) => state.filters.status;
@@ -26,7 +33,6 @@ export const selectFilteredCandidates = createSelector(
                     return true;
                 });
 
-        // Sort by lastActiveAt, slice first to avoid mutating the original array
         return [...filtered].sort((a, b) => {
             const diff =
                 new Date(a.lastActiveAt).getTime() -
@@ -41,21 +47,25 @@ export const selectTotalCount = (state: RootState) =>
 
 export const selectIsLoading = (state: RootState) => state.ui.isLoading;
 export const selectError = (state: RootState) => state.ui.error;
-export const selectSelectedCandidateId = (state: RootState) => state.ui.selectedCandidateId;
-export const selectPendingTerminateCandidateId = (state: RootState) => state.ui.pendingTerminateCandidateId;
-export const selectConnectionStatus = (state: RootState) => state.ui.connectionStatus;
-export const selectSortDirection = (state: RootState) => state.filters.sortDirection;
+export const selectSelectedCandidateId = (state: RootState) =>
+    state.ui.selectedCandidateId;
+export const selectPendingTerminateCandidateId = (state: RootState) =>
+    state.ui.pendingTerminateCandidateId;
+export const selectConnectionStatus = (state: RootState) =>
+    state.ui.connectionStatus;
+export const selectSortDirection = (state: RootState) =>
+    state.filters.sortDirection;
 
 export const selectSelectedCandidate = createSelector(
-    [(state: RootState) => state.candidates.items, selectSelectedCandidateId],
-    (items, id): Candidate | null =>
-        id ? (items.find((c) => c.id === id) ?? null) : null
+    [selectEntities, selectSelectedCandidateId],
+    (entities, id): Candidate | null =>
+        id ? (entities[id] ?? null) : null
 );
 
 export const selectPendingTerminateCandidate = createSelector(
-    [(state: RootState) => state.candidates.items, selectPendingTerminateCandidateId],
-    (items, id): Candidate | null =>
-        id ? (items.find((c) => c.id === id) ?? null) : null
+    [selectEntities, selectPendingTerminateCandidateId],
+    (entities, id): Candidate | null =>
+        id ? (entities[id] ?? null) : null
 );
 
 export const selectCandidateActivity = createSelector(
