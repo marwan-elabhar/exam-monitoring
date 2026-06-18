@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UIState } from "@/types";
+import { UIState, ConnectionStatus } from "@/types";
 
 const initialState: UIState = {
   selectedCandidateId: null,
   isLoading: true,
   error: null,
+  connectionStatus: "connecting",
 };
 
 const uiSlice = createSlice({
@@ -20,9 +21,17 @@ const uiSlice = createSlice({
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
     },
+    setConnectionStatus(state, action: PayloadAction<ConnectionStatus>) {
+      state.connectionStatus = action.payload;
+    },
   },
 });
 
-export const { setSelectedCandidate, setLoading, setError } = uiSlice.actions;
+export const {
+  setSelectedCandidate,
+  setLoading,
+  setError,
+  setConnectionStatus,
+} = uiSlice.actions;
 
 export default uiSlice.reducer;
