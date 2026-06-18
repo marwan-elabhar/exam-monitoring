@@ -5,6 +5,7 @@ const initialState: FiltersState = {
   search: "",
   risk: "all",
   status: "all",
+  sortDirection: "desc", // newest first by default
 };
 
 const filtersSlice = createSlice({
@@ -20,13 +21,16 @@ const filtersSlice = createSlice({
     setStatus(state, action: PayloadAction<SessionStatus | "all">) {
       state.status = action.payload;
     },
+    toggleSort(state) {
+      state.sortDirection = state.sortDirection === "desc" ? "asc" : "desc";
+    },
     resetFilters() {
       return initialState;
     },
   },
 });
 
-export const { setSearch, setRisk, setStatus, resetFilters } =
+export const { setSearch, setRisk, setStatus, toggleSort, resetFilters } =
   filtersSlice.actions;
 
 export default filtersSlice.reducer;

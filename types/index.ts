@@ -47,10 +47,13 @@ export interface CandidateActivity {
   timestamp: string; // ISO string
 }
 
+export type SortDirection = "asc" | "desc";
+
 export interface FiltersState {
   search: string;
   risk: RiskLevel | "all";
   status: SessionStatus | "all";
+  sortDirection: SortDirection;
 }
 
 export type ConnectionStatus =
