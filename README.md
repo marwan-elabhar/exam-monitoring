@@ -49,6 +49,69 @@ The codebase is organized to separate concerns and improve maintainability.
 └── types/                # TypeScript type definitions for the application
 ```
 
+## Trade-off Decisions
+
+### 1. No Authentication (Scope vs. Value)
+
+**Decision:** Skipped login/authentication for the MVP.
+
+**Why:** The core objective was the real-time monitoring dashboard itself. Adding authentication would have required:
+
+- Login/signup flows
+- Session management
+- Protected routes
+- Role-based access control (RBAC)
+
+**Production alternative:** Integrate with enterprise SSO (Auth0/Okta) with role-based access. Proctors see assigned
+sessions, supervisors see all sessions plus team metrics.
+
+---
+
+### 2. Single Dashboard for Both Roles
+
+**Decision:** Built one unified dashboard for proctors and operations supervisors.
+
+**Why:** The requirements listed both as primary users, but their needs overlap ~90%. Both need:
+
+- Real-time session visibility
+- Risk indicators
+- Incident investigation
+- Proctor actions (warn/terminate)
+
+Building separate dashboards would duplicate code and create maintenance overhead. A unified view keeps the interface
+clean and reduces cognitive load.
+
+**Production alternative:** Add supervisor-specific panels (proctor utilization, team performance, audit logs) as
+collapsible sections or tabs within the same dashboard.
+
+---
+
+### 3. Header-Only Layout (No Sidebar)
+
+**Decision:** Used a header + filter bar layout instead of a sidebar navigation.
+
+**Why:**
+
+- Proctors monitor a **single view** (live sessions)
+- Sidebar steals ~250px of table width on desktop
+- Filters in header are 1-click accessible vs hamburger menu (2 clicks)
+- Mobile: stacked header provides all functionality without navigation clutter
+
+---
+
+### 4. Slideout vs New Page for Session Details
+
+**Decision:** Used a slideout overlay instead of a new route (`/session/:id`).
+
+**Why:**
+
+- Maintains table context (proctor doesn't lose their place)
+- Faster to open and close (no page navigation)
+- Preserves filter and sort state
+- Better mobile experience (slides up from bottom)
+
+---
+
 ## Getting Started
 
 To run the project locally, follow these steps.
