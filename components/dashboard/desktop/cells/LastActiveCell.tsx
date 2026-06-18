@@ -1,10 +1,11 @@
+import { memo } from "react";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface LastActiveCellProps {
   isoString: string;
 }
 
-export function LastActiveCell({ isoString }: LastActiveCellProps) {
+export const LastActiveCell = memo(function LastActiveCell({ isoString }: LastActiveCellProps) {
   return (
     <div className="w-[160px] shrink-0">
       <time
@@ -16,4 +17,4 @@ export function LastActiveCell({ isoString }: LastActiveCellProps) {
       </time>
     </div>
   );
-}
+});
