@@ -14,6 +14,7 @@ import {EmptyState} from "@/components/ui/EmptyState";
 import {ConnectionBanner} from "@/components/ui/ConnectionBanner";
 import {Filters} from "@/components/dashboard/Filters";
 import Header from "@/components/dashboard/Header";
+import {CandidateDetail} from "@/components/dashboard/candidate-details/CandidateDetail";
 
 export function CandidateList() {
     const dispatch = useAppDispatch();
@@ -62,6 +63,7 @@ export function CandidateList() {
                     ? <CandidateCardList {...sharedProps} />
                     : <CandidatesTable {...sharedProps} />
             }
+            <CandidateDetail/>
         </div>
     );
 }
