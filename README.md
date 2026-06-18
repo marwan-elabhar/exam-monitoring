@@ -94,8 +94,6 @@ collapsible sections or tabs within the same dashboard.
 
 - Proctors monitor a **single view** (live sessions)
 - Sidebar steals ~250px of table width on desktop
-- Filters in header are 1-click accessible vs hamburger menu (2 clicks)
-- Mobile: stacked header provides all functionality without navigation clutter
 
 ---
 
